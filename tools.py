@@ -1,6 +1,5 @@
 import click
-from utils import session_scope
-from schemas import Base, User
+import yaml
 from streamlit_authenticator import Hasher
 from env_settings import EnvSettings
 
@@ -14,25 +13,28 @@ def cli():
 
 
 @click.command()
-def setup():
-    """初始化系統設置"""
-    with session_scope() as session:
-        Base.metadata.drop_all(session.bind)
-        Base.metadata.create_all(session.bind)
+def encrypt_password():
+    """加密使用者密碼"""
+    # 讀取 YAML 文件
+    with open('./credentials.yaml', 'r') as file:
+        data = yaml.safe_load(file)
 
-        new_user = User(
-            username=env_settings.ROOT_NAME,
-            email=env_settings.ROOT_EMAIL,
-            password=Hasher([env_settings.ROOT_PASSWORD]).generate()[0],
-            is_superuser=True
-        )
-        session.add(new_user)
-        session.commit()
+    # 遍歷用戶名並更改密碼
+    for username in data['credentials']['usernames']:
+        if not data['credentials']['usernames'][username].get("is_encrypt"):
+            data['credentials']['usernames'][username]['password'] = Hasher([
+                data['credentials']['usernames'][username]['password']
+            ]).generate()[0]
+            data['credentials']['usernames'][username]['is_encrypt'] = True
 
-    click.echo("系統初始化完成，包括資料庫和超級用戶的創建。")
+    # 將更新後的數據寫回 YAML 文件
+    with open('./credentials.yaml', 'w') as file:
+        yaml.safe_dump(data, file)
+
+    click.echo("使用者密碼加密完成")
 
 
-cli.add_command(setup)
+cli.add_command(encrypt_password)
 
 if __name__ == '__main__':
     cli()
