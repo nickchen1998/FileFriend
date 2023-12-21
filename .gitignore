@@ -1,0 +1,8 @@
+# 單個檔案
+*.env
+*.sqlite3
+poetry.lock
+
+
+# 目錄名稱
+.idea/
