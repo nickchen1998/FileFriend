@@ -2,6 +2,7 @@
 *.env
 *.sqlite3
 poetry.lock
+credentials.yaml
 
 # 目錄名稱
 .idea/
