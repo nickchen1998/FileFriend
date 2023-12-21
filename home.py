@@ -2,20 +2,12 @@ import yaml
 import streamlit as st
 import streamlit_authenticator as stauth
 from env_settings import EnvSettings
+from utils import get_authenticator
 
 env_settings = EnvSettings()
-
-with open('./credentials.yaml') as file:
-    config = yaml.load(file, Loader=yaml.SafeLoader)
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
-)
-
-name, authentication_status, username = authenticator.login('Login', 'main')
+authenticator = get_authenticator()
+name, authentication_status, username = authenticator.login(
+    'Login', 'main')
 
 if authentication_status:
     with st.sidebar:

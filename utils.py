@@ -2,6 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 from env_settings import EnvSettings
+import yaml
+import streamlit_authenticator as stauth
 
 env_settings = EnvSettings()
 
@@ -13,8 +15,21 @@ def session_scope():
     try:
         yield session
         session.commit()
-    except:
+    except Exception:
         session.rollback()
         raise
     finally:
         session.close()
+
+
+def get_authenticator() -> stauth.Authenticate:
+    with open('./credentials.yaml') as file:
+        config = yaml.load(file, Loader=yaml.SafeLoader)
+
+    return stauth.Authenticate(
+        config['credentials'],
+        config['cookie']['name'],
+        config['cookie']['key'],
+        config['cookie']['expiry_days'],
+        config['preauthorized']
+    )
