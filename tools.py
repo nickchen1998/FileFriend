@@ -2,6 +2,8 @@ import click
 import yaml
 from streamlit_authenticator import Hasher
 from env_settings import EnvSettings
+from utils import session_scope
+from databases.schemas import Base
 
 env_settings = EnvSettings()
 
@@ -34,6 +36,16 @@ def encrypt_password():
     click.echo("使用者密碼加密完成")
 
 
+@click.command()
+def init_database():
+    """資料庫初始化"""
+    with session_scope() as session:
+        Base.metadata.drop_all(session.bind)
+        Base.metadata.create_all(session.bind)
+        click.echo("資料庫初始化完成")
+
+
+cli.add_command(init_database)
 cli.add_command(encrypt_password)
 
 if __name__ == '__main__':

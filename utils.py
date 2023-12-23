@@ -4,6 +4,8 @@ from contextlib import contextmanager
 from env_settings import EnvSettings
 import yaml
 import streamlit_authenticator as stauth
+import hashlib
+from typing import Union
 
 env_settings = EnvSettings()
 
@@ -33,3 +35,11 @@ def get_authenticator() -> stauth.Authenticate:
         config['cookie']['expiry_days'],
         config['preauthorized']
     )
+
+
+def get_content_md5(content: Union[bytes, str]):
+    m = hashlib.md5()
+    m.update(content)
+    h = m.hexdigest()
+
+    return h
