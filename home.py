@@ -34,6 +34,8 @@ if authentication_status:
 
     if show_upload_block:
         st.header('檔案上傳')
+        tags = st.text_input("請輸入標籤：", placeholder='多個標籤請用半形逗號隔開')
+
         uploaded_files = st.file_uploader("Choose a CSV file", accept_multiple_files=True)
         if not os.path.exists(BASE_DIR / 'files'):
             os.mkdir(BASE_DIR / 'files')
@@ -42,11 +44,14 @@ if authentication_status:
             bytes_data = uploaded_file.read()
             with open(BASE_DIR / 'files' / f'{uploaded_file.name}', 'wb') as file:
                 file.write(bytes_data)
+                print(tags)
 
         st.divider()
 
     if show_delete_block:
         st.header('檔案刪除')
+        tag_delete = st.text_input("請輸入標籤：")
+        file_name_delete = st.text_input("請輸入檔案名稱：")
 
         st.divider()
 

@@ -5,4 +5,3 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-# 定義 User 模型
