@@ -30,7 +30,7 @@ def init_system():
 
         data = {
             "cookie": {
-                "expiry_days": 30,
+                "expiry_days": 1,
                 "key": "random_signature_key",
                 "name": "random_cookie_name"
             },
