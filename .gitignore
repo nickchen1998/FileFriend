@@ -7,3 +7,4 @@ credentials.yaml
 # 目錄名稱
 .idea/
 files/
+__pycache__/
