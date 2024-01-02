@@ -1,6 +1,7 @@
 import streamlit as st
 from utils import get_authenticator, session_scope
 from databases import cruds
+from env_settings import BASE_DIR
 from templates.files import show_upload_block_method, show_delete_block_method
 from templates.users import show_user_manage_block_method
 
@@ -42,12 +43,13 @@ if authentication_status:
     if show_user_block:
         show_user_manage_block_method()
 
-    st.header('最近上傳')
+    st.header('搜尋結果')
     with session_scope() as session:
         for index, file in enumerate(cruds.get_files(session=session)):
             with st.expander(f"{file.name}"):
                 st.write(f"{file.name}")
-                binary_contents = b'example content'
+                with open(f"{BASE_DIR} / files / {file.name}", 'rb') as _file:
+                    binary_contents = _file.read()
                 st.download_button('Download File', binary_contents, key=index)
 
 elif authentication_status is False:
