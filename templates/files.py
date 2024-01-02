@@ -12,6 +12,7 @@ def show_upload_block_method():
 
     now = datetime.now()
     for uploaded_file in st.file_uploader("Choose a CSV file", accept_multiple_files=True):
+        print(uploaded_file.name)
         if not os.path.exists(BASE_DIR / 'files' / uploaded_file.name):
             with session_scope() as session:
                 tags = tag_string.split(',') if tag_string else [f'{now.year}-{now.month}-{now.day}']
@@ -29,7 +30,6 @@ def show_upload_block_method():
                 if file_obj:
                     with open(BASE_DIR / 'files' / f'{uploaded_file.name}', 'wb') as file:
                         file.write(bytes_data)
-
     st.divider()
 
 

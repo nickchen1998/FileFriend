@@ -53,6 +53,9 @@ def init_system():
 
         if not os.path.exists(BASE_DIR / 'files'):
             os.mkdir(BASE_DIR / 'files')
+        else:
+            os.rmdir(BASE_DIR / 'files')
+            os.mkdir(BASE_DIR / 'files')
     else:
         click.echo("兩次 password 不一致，請重新執行。")
 

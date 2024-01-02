@@ -1,3 +1,5 @@
+import os
+import mimetypes
 import streamlit as st
 from utils import get_authenticator, session_scope
 from databases import cruds
@@ -46,11 +48,17 @@ if authentication_status:
     st.header('搜尋結果')
     with session_scope() as session:
         for index, file in enumerate(cruds.get_files(session=session)):
-            with st.expander(f"{file.name}"):
-                st.write(f"{file.name}")
-                with open(f"{BASE_DIR} / files / {file.name}", 'rb') as _file:
-                    binary_contents = _file.read()
-                st.download_button('Download File', binary_contents, key=index)
+            if os.path.exists(BASE_DIR / 'files' / file.name):
+                with st.expander(f"{file.name}"):
+                    with open(BASE_DIR / 'files' / file.name, 'rb') as _file:
+                        binary_contents = _file.read()
+                    st.download_button(
+                        'Download File',
+                        binary_contents,
+                        file_name=file.name,
+                        mime=mimetypes.guess_type(file.name)[0],
+                        key=index
+                    )
 
 elif authentication_status is False:
     st.error('Username/password is incorrect')
