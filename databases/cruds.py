@@ -29,3 +29,7 @@ def create_file(session: Session, name: str, hashcode: str, size: float, tags: L
         session.refresh(file)
 
         return file
+
+
+def get_files(session: Session):
+    return session.query(File).all()

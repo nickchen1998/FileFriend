@@ -1,7 +1,8 @@
+import os
 import click
 import yaml
 from streamlit_authenticator import Hasher
-from env_settings import EnvSettings
+from env_settings import EnvSettings, BASE_DIR
 from utils import session_scope
 from databases.schemas import Base
 
@@ -15,38 +16,48 @@ def cli():
 
 
 @click.command()
-def encrypt_password():
-    """加密使用者密碼"""
-    # 讀取 YAML 文件
-    with open('./credentials.yaml', 'r') as file:
-        data = yaml.safe_load(file)
+def init_system():
+    """初始化資料庫及建立 superuser"""
+    email = input("請輸入 email：")
+    password = input("請輸入 password：")
+    password_confirm = input("請再次輸入 password：")
+    if password == password_confirm:
+        with session_scope() as session:
+            Base.metadata.drop_all(session.bind)
+            Base.metadata.create_all(session.bind)
 
-    # 遍歷用戶名並更改密碼
-    for username in data['credentials']['usernames']:
-        if not data['credentials']['usernames'][username].get("is_encrypt"):
-            data['credentials']['usernames'][username]['password'] = Hasher([
-                data['credentials']['usernames'][username]['password']
-            ]).generate()[0]
-            data['credentials']['usernames'][username]['is_encrypt'] = True
-
-    # 將更新後的數據寫回 YAML 文件
-    with open('./credentials.yaml', 'w') as file:
-        yaml.safe_dump(data, file)
-
-    click.echo("使用者密碼加密完成")
-
-
-@click.command()
-def init_database():
-    """資料庫初始化"""
-    with session_scope() as session:
-        Base.metadata.drop_all(session.bind)
-        Base.metadata.create_all(session.bind)
         click.echo("資料庫初始化完成")
 
+        data = {
+            "cookie": {
+                "expiry_days": 30,
+                "key": "random_signature_key",
+                "name": "random_cookie_name"
+            },
+            "credentials": {
+                "usernames": {
+                    "root": {
+                        "email": email,
+                        "name": "root",
+                        "password": Hasher([password]).generate()[0]
+                    }
+                }
+            },
+            "preauthorized": {
+                "emails": ["melsby@gmail.com"]
+            }
+        }
+        with open('./credentials.yaml', 'w') as file:
+            yaml.safe_dump(data, file)
+        click.echo("超級使用者建立完成")
 
-cli.add_command(init_database)
-cli.add_command(encrypt_password)
+        if not os.path.exists(BASE_DIR / 'files'):
+            os.mkdir(BASE_DIR / 'files')
+    else:
+        click.echo("兩次 password 不一致，請重新執行。")
+
+
+cli.add_command(init_system)
 
 if __name__ == '__main__':
     cli()
