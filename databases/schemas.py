@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Table, DateTime, BINARY, Float
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, DateTime, Text, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -20,6 +20,7 @@ class File(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     size = Column(Float, nullable=False)
+    description = Column(Text, nullable=True)
     hashcode = Column(String(100), nullable=False, unique=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     tags = relationship('Tag', secondary=file_tag_association, back_populates='files')

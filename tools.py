@@ -54,6 +54,9 @@ def init_system():
         if not os.path.exists(BASE_DIR / 'files'):
             os.mkdir(BASE_DIR / 'files')
         else:
+            for root, dirs, files in os.walk(BASE_DIR / 'files'):
+                for file in files:
+                    os.remove(os.path.join(root, file))
             os.rmdir(BASE_DIR / 'files')
             os.mkdir(BASE_DIR / 'files')
     else:
