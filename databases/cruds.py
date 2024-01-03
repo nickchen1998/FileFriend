@@ -19,11 +19,11 @@ def create_tags(session: Session, tags: List[str]) -> List[Tag]:
     return tag_list
 
 
-def create_file(session: Session, name: str, hashcode: str, size: float, tags: List[Tag]) -> File:
+def create_file(session: Session, name: str, description: str, hashcode: str, size: float, tags: List[Tag]) -> File:
     if file := session.query(File).filter(File.name == name).first():
         return file
     else:
-        file = File(name=name, size=size, hashcode=hashcode, tags=tags)
+        file = File(name=name, size=size, hashcode=hashcode, tags=tags, description=description)
         session.add(file)
         session.commit()
         session.refresh(file)

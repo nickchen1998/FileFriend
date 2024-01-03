@@ -7,28 +7,31 @@ from datetime import datetime
 
 
 def show_upload_block_method():
+    now = datetime.now()
+
     st.header('檔案上傳')
     tag_string = st.text_input("請輸入標籤：", placeholder='多個標籤請用半形逗號隔開')
+    description = st.text_input("請輸入檔案描述：")
+    upload_file = st.file_uploader("請選擇要上傳的檔案", accept_multiple_files=False)
 
-    now = datetime.now()
-    for uploaded_file in st.file_uploader("Choose a CSV file", accept_multiple_files=True):
-        print(uploaded_file.name)
-        if not os.path.exists(BASE_DIR / 'files' / uploaded_file.name):
+    if st.button('上傳') and upload_file and description:
+        if not os.path.exists(BASE_DIR / 'files' / upload_file.name):
             with session_scope() as session:
                 tags = tag_string.split(',') if tag_string else [f'{now.year}-{now.month}-{now.day}']
                 tag_obj_list = cruds.create_tags(session=session, tags=tags)
 
-                bytes_data = uploaded_file.read()
+                bytes_data = upload_file.read()
                 file_obj = cruds.create_file(
                     session=session,
-                    name=uploaded_file.name,
+                    name=upload_file.name,
+                    description=description,
                     hashcode=get_content_md5(bytes_data),
-                    size=uploaded_file.size,
+                    size=upload_file.size,
                     tags=tag_obj_list
                 )
 
                 if file_obj:
-                    with open(BASE_DIR / 'files' / f'{uploaded_file.name}', 'wb') as file:
+                    with open(BASE_DIR / 'files' / f'{upload_file.name}', 'wb') as file:
                         file.write(bytes_data)
     st.divider()
 
