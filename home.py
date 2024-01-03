@@ -50,10 +50,7 @@ if authentication_status:
         for index, file in enumerate(cruds.get_files(session=session)):
             if os.path.exists(BASE_DIR / 'files' / file.name):
                 with st.expander(f"{file.name}"):
-                    tag_string = ""
-                    for tag in file.tags:
-                        tag_string += f'{tag.name} '
-                    st.write(f'檔案標籤：{tag_string}')
+                    st.write(f"檔案標籤：{', '.join(list(map(lambda x: x.name, file.tags)))}")
                     st.write(f'檔案描述：{file.description}')
 
                     # 檔案下載按鈕
