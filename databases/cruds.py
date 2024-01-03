@@ -1,7 +1,8 @@
+import os
+from env_settings import BASE_DIR
 from sqlalchemy.orm import Session
 from databases.schemas import File, Tag
 from typing import List
-from utils import get_content_md5
 
 
 def create_tags(session: Session, tags: List[str]) -> List[Tag]:
@@ -33,3 +34,31 @@ def create_file(session: Session, name: str, description: str, hashcode: str, si
 
 def get_files(session: Session):
     return session.query(File).all()
+
+
+def delete_files_by_tag(session: Session, tag: str):
+    if tag := session.query(Tag).filter(Tag.name == tag).first():
+        for file in tag.files:
+            if os.path.exists(BASE_DIR / 'files' / file.name):
+                os.remove(BASE_DIR / 'files' / file.name)
+
+            session.delete(file)
+        session.delete(tag)
+        session.commit()
+
+        return True
+    else:
+        return False
+
+
+def delete_file_by_filename(session: Session, filename: str):
+    if file := session.query(File).filter(File.name == filename).first():
+        if os.path.exists(BASE_DIR / 'files' / file.name):
+            os.remove(BASE_DIR / 'files' / file.name)
+
+        session.delete(file)
+        session.commit()
+
+        return True
+    else:
+        return False
