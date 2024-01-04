@@ -45,13 +45,14 @@ if authentication_status:
     if show_user_block:
         show_user_manage_block_method()
 
-    st.header('搜尋結果')
+    st.header('檔案列表')
     with session_scope() as session:
         for index, file in enumerate(cruds.get_files(session=session)):
             if os.path.exists(BASE_DIR / 'files' / file.name):
                 with st.expander(f"{file.name}"):
                     st.write(f"檔案標籤：{', '.join(list(map(lambda x: x.name, file.tags)))}")
                     st.write(f'檔案描述：{file.description}')
+                    st.write(f'上傳時間：{file.created_at}')
 
                     # 檔案下載按鈕
                     with open(BASE_DIR / 'files' / file.name, 'rb') as _file:
