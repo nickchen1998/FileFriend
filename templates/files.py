@@ -16,7 +16,7 @@ def show_upload_block_method():
 
         if st.form_submit_button('上傳'):
             if upload_file and description and tag_string:
-                if not os.path.exists(BASE_DIR / 'files' / upload_file.name):
+                if not os.path.exists(BASE_DIR / 'volumes' / 'files' / upload_file.name):
                     with session_scope() as session:
                         tags = tag_string.split(',') if tag_string else [f'{now.year}-{now.month}-{now.day}']
                         tag_obj_list = cruds.create_tags(session=session, tags=tags)
@@ -32,7 +32,7 @@ def show_upload_block_method():
                         )
 
                         if file_obj:
-                            with open(BASE_DIR / 'files' / f'{upload_file.name}', 'wb') as file:
+                            with open(BASE_DIR / 'volumes' / 'files' / f'{upload_file.name}', 'wb') as file:
                                 file.write(bytes_data)
                             st.success("上傳成功")
 

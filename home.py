@@ -67,14 +67,14 @@ if authentication_status:
     st.header('檔案列表')
 
     for index, file in enumerate(file_list):
-        if os.path.exists(BASE_DIR / 'files' / file.get('name')):
+        if os.path.exists(BASE_DIR / 'volumes' / 'files' / file.get('name')):
             with st.expander(f"{file.get('name')}"):
                 st.write(f"檔案標籤：{', '.join(list(file.get('tags')))}")
                 st.write(f'檔案描述：{file.get("description")}')
                 st.write(f'上傳時間：{file.get("created_at")}')
 
                 # 檔案下載按鈕
-                with open(BASE_DIR / 'files' / file.get('name'), 'rb') as _file:
+                with open(BASE_DIR / 'volumes' / 'files' / file.get('name'), 'rb') as _file:
                     binary_contents = _file.read()
                 st.download_button(
                     'Download File',

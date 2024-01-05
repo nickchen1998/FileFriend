@@ -59,11 +59,12 @@ def parse_file_to_dict(file: File):
         'created_at': file.created_at
     }
 
+
 def delete_files_by_tag(session: Session, tag: str):
     if tag := session.query(Tag).filter(Tag.name == tag).first():
         for file in tag.files:
-            if os.path.exists(BASE_DIR / 'files' / file.name):
-                os.remove(BASE_DIR / 'files' / file.name)
+            if os.path.exists(BASE_DIR / 'volumes' / 'files' / file.name):
+                os.remove(BASE_DIR / 'volumes' / 'files' / file.name)
 
             session.delete(file)
         session.delete(tag)
@@ -76,8 +77,8 @@ def delete_files_by_tag(session: Session, tag: str):
 
 def delete_file_by_filename(session: Session, filename: str):
     if file := session.query(File).filter(File.name == filename).first():
-        if os.path.exists(BASE_DIR / 'files' / file.name):
-            os.remove(BASE_DIR / 'files' / file.name)
+        if os.path.exists(BASE_DIR / 'volumes' / 'files' / file.name):
+            os.remove(BASE_DIR / 'volumes' / 'files' / file.name)
 
         session.delete(file)
         session.commit()

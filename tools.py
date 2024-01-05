@@ -50,14 +50,14 @@ def init_system():
         yaml.safe_dump(data, file)
     click.echo("超級使用者建立完成")
 
-    if not os.path.exists(BASE_DIR / 'files'):
-        os.mkdir(BASE_DIR / 'files')
+    if not os.path.exists(BASE_DIR / 'volumes' / 'files'):
+        os.mkdir(BASE_DIR / 'volumes' / 'files')
     else:
-        for root, dirs, files in os.walk(BASE_DIR / 'files'):
+        for root, dirs, files in os.walk(BASE_DIR / 'volumes' / 'files'):
             for file in files:
                 os.remove(os.path.join(root, file))
-        os.rmdir(BASE_DIR / 'files')
-        os.mkdir(BASE_DIR / 'files')
+        os.rmdir(BASE_DIR / 'volumes' / 'files')
+        os.mkdir(BASE_DIR / 'volumes' / 'files')
 
 
 cli.add_command(init_system)
