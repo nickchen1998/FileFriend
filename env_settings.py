@@ -5,7 +5,9 @@ BASE_DIR = pathlib.Path(__file__).parent
 
 
 class EnvSettings(BaseSettings):
-    DB_NAME: str = "file_friend"
+    DB_NAME: str = "ffd.sqlite3"
+    ROOT_EMAIL: str = None
+    ROOT_PASSWORD: str = None
 
     model_config = SettingsConfigDict(
         env_file='.env',

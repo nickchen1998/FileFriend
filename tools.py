@@ -18,49 +18,46 @@ def cli():
 @click.command()
 def init_system():
     """初始化資料庫及建立 superuser"""
-    email = input("請輸入 email：")
-    password = input("請輸入 password：")
-    password_confirm = input("請再次輸入 password：")
-    if password == password_confirm:
-        with session_scope() as session:
-            Base.metadata.drop_all(session.bind)
-            Base.metadata.create_all(session.bind)
+    if not os.path.exists(BASE_DIR / 'volumes'):
+        os.mkdir(BASE_DIR / 'volumes')
 
-        click.echo("資料庫初始化完成")
+    with session_scope() as session:
+        Base.metadata.drop_all(session.bind)
+        Base.metadata.create_all(session.bind)
 
-        data = {
-            "cookie": {
-                "expiry_days": 1,
-                "key": "random_signature_key",
-                "name": "random_cookie_name"
-            },
-            "credentials": {
-                "usernames": {
-                    "root": {
-                        "email": email,
-                        "name": "root",
-                        "password": Hasher([password]).generate()[0]
-                    }
+    click.echo("資料庫初始化完成")
+
+    data = {
+        "cookie": {
+            "expiry_days": 1,
+            "key": "random_signature_key",
+            "name": "random_cookie_name"
+        },
+        "credentials": {
+            "usernames": {
+                "root": {
+                    "email": env_settings.ROOT_EMAIL,
+                    "name": "root",
+                    "password": Hasher([env_settings.ROOT_PASSWORD]).generate()[0]
                 }
-            },
-            "preauthorized": {
-                "emails": ["melsby@gmail.com"]
             }
+        },
+        "preauthorized": {
+            "emails": ["melsby@gmail.com"]
         }
-        with open('./credentials.yaml', 'w') as file:
-            yaml.safe_dump(data, file)
-        click.echo("超級使用者建立完成")
+    }
+    with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'w') as file:
+        yaml.safe_dump(data, file)
+    click.echo("超級使用者建立完成")
 
-        if not os.path.exists(BASE_DIR / 'files'):
-            os.mkdir(BASE_DIR / 'files')
-        else:
-            for root, dirs, files in os.walk(BASE_DIR / 'files'):
-                for file in files:
-                    os.remove(os.path.join(root, file))
-            os.rmdir(BASE_DIR / 'files')
-            os.mkdir(BASE_DIR / 'files')
+    if not os.path.exists(BASE_DIR / 'files'):
+        os.mkdir(BASE_DIR / 'files')
     else:
-        click.echo("兩次 password 不一致，請重新執行。")
+        for root, dirs, files in os.walk(BASE_DIR / 'files'):
+            for file in files:
+                os.remove(os.path.join(root, file))
+        os.rmdir(BASE_DIR / 'files')
+        os.mkdir(BASE_DIR / 'files')
 
 
 cli.add_command(init_system)

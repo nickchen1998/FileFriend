@@ -18,7 +18,7 @@ def show_user_manage_block_method():
 
             if st.form_submit_button('新增'):
                 if password == password_confirm:
-                    with open(BASE_DIR / 'credentials.yaml', 'r') as file:
+                    with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'r') as file:
                         data = yaml.safe_load(file)
 
                     if data['credentials']['usernames'].get(username):
@@ -29,7 +29,7 @@ def show_user_manage_block_method():
                             "name": username,
                             "password": Hasher([password]).generate()[0]
                         }
-                        with open(BASE_DIR / 'credentials.yaml', 'w') as file:
+                        with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'w') as file:
                             yaml.safe_dump(data, file)
                         st.success("新增成功")
                 else:
@@ -44,7 +44,7 @@ def show_user_manage_block_method():
                 if username and email:
                     st.error("請選擇一種刪除方式")
                 elif username:
-                    with open(BASE_DIR / 'credentials.yaml', 'r') as file:
+                    with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'r') as file:
                         data = yaml.safe_load(file)
 
                     if data['credentials']['usernames'].get(username):
@@ -52,13 +52,13 @@ def show_user_manage_block_method():
                             st.error("root 無法刪除")
                         else:
                             del data['credentials']['usernames'][username]
-                            with open(BASE_DIR / 'credentials.yaml', 'w') as file:
+                            with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'w') as file:
                                 yaml.safe_dump(data, file)
                             st.success("刪除成功")
                     else:
                         st.error(f"{username} 不存在")
                 elif email:
-                    with open(BASE_DIR / 'credentials.yaml', 'r') as file:
+                    with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'r') as file:
                         data = yaml.safe_load(file)
 
                     for username, info in data['credentials']['usernames'].items():
@@ -68,7 +68,7 @@ def show_user_manage_block_method():
                                 break
                             else:
                                 del data['credentials']['usernames'][username]
-                                with open(BASE_DIR / 'credentials.yaml', 'w') as file:
+                                with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'w') as file:
                                     yaml.safe_dump(data, file)
                                 st.success("刪除成功")
                                 break

@@ -5,7 +5,10 @@ services:
     build: .
     ports:
       - "${PORT:-8501}:${PORT:-8501}"
-    command: streamlit run home.py --server.port ${PORT:-8501}
+    command: >
+      sh -c "
+      python tools.py init-system &&
+      streamlit run home.py --server.port ${PORT:-8502}
+      "
     volumes:
-      - "${FFD_SQLITE_PATH}/file_friend.sqlite3:/app/file_friend.sqlite3"
-      - "${CREDENTIALS_PATH}/credentials.yaml:/app/credentials.yaml"
+      - "${FFD_DATA_PATH}:/app/volumes"

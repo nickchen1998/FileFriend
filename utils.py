@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
-from env_settings import EnvSettings
+from env_settings import EnvSettings, BASE_DIR
 import yaml
 import streamlit_authenticator as stauth
 import hashlib
@@ -12,7 +12,8 @@ env_settings = EnvSettings()
 
 @contextmanager
 def session_scope():
-    engine = create_engine(f'sqlite:///{env_settings.DB_NAME}.sqlite3')
+    db_path = BASE_DIR / 'volumes' / env_settings.DB_NAME
+    engine = create_engine(f'sqlite:///{db_path}')
     session = sessionmaker(bind=engine)()
     try:
         yield session
@@ -25,7 +26,7 @@ def session_scope():
 
 
 def get_authenticator() -> stauth.Authenticate:
-    with open('./credentials.yaml') as file:
+    with open(BASE_DIR / 'volumes' / './credentials.yaml') as file:
         config = yaml.load(file, Loader=yaml.SafeLoader)
 
     return stauth.Authenticate(
