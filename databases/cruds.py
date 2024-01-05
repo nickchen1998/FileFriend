@@ -33,8 +33,31 @@ def create_file(session: Session, name: str, description: str, hashcode: str, si
 
 
 def get_files(session: Session):
-    return session.query(File).all()
+    return [parse_file_to_dict(file) for file in session.query(File).all()]
 
+
+def get_files_by_tag(session: Session, tag: str):
+    if tag := session.query(Tag).filter(Tag.name == tag).first():
+        return [parse_file_to_dict(file) for file in tag.files]
+    else:
+        return []
+
+
+def get_file_by_filename(session: Session, filename: str):
+    file = session.query(File).filter(File.name == filename).first()
+    return parse_file_to_dict(file)
+
+
+def parse_file_to_dict(file: File):
+    return {
+        'id': file.id,
+        'name': file.name,
+        'size': file.size,
+        'description': file.description,
+        'hashcode': file.hashcode,
+        'tags': [tag.name for tag in file.tags],
+        'created_at': file.created_at
+    }
 
 def delete_files_by_tag(session: Session, tag: str):
     if tag := session.query(Tag).filter(Tag.name == tag).first():
