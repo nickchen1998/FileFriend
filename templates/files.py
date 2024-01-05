@@ -34,7 +34,6 @@ def show_upload_block_method():
                         if file_obj:
                             with open(BASE_DIR / 'volumes' / 'files' / f'{upload_file.name}', 'wb') as file:
                                 file.write(bytes_data)
-                            st.success("上傳成功")
 
 
 def show_delete_block_method():
@@ -52,13 +51,9 @@ def show_delete_block_method():
                     result = cruds.delete_files_by_tag(session=session, tag=tag)
                     if result is False:
                         st.error("標籤不存在")
-                    else:
-                        st.success("刪除成功")
 
             elif file_name:
                 with session_scope() as session:
                     result = cruds.delete_file_by_filename(session=session, filename=file_name)
                     if result is False:
                         st.error("檔案不存在")
-                    else:
-                        st.success("刪除成功")

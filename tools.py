@@ -21,34 +21,32 @@ def init_system():
     if not os.path.exists(BASE_DIR / 'volumes'):
         os.mkdir(BASE_DIR / 'volumes')
 
-    with session_scope() as session:
-        Base.metadata.drop_all(session.bind)
-        Base.metadata.create_all(session.bind)
+    if env_settings.DEBUG:
+        with session_scope() as session:
+            Base.metadata.drop_all(session.bind)
+            Base.metadata.create_all(session.bind)
 
-    click.echo("資料庫初始化完成")
-
-    data = {
-        "cookie": {
-            "expiry_days": 1,
-            "key": "random_signature_key",
-            "name": "random_cookie_name"
-        },
-        "credentials": {
-            "usernames": {
-                "root": {
-                    "email": env_settings.ROOT_EMAIL,
-                    "name": "root",
-                    "password": Hasher([env_settings.ROOT_PASSWORD]).generate()[0]
+        data = {
+            "cookie": {
+                "expiry_days": 1,
+                "key": "random_signature_key",
+                "name": "random_cookie_name"
+            },
+            "credentials": {
+                "usernames": {
+                    "root": {
+                        "email": env_settings.ROOT_EMAIL,
+                        "name": "root",
+                        "password": Hasher([env_settings.ROOT_PASSWORD]).generate()[0]
+                    }
                 }
+            },
+            "preauthorized": {
+                "emails": ["melsby@gmail.com"]
             }
-        },
-        "preauthorized": {
-            "emails": ["melsby@gmail.com"]
         }
-    }
-    with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'w') as file:
-        yaml.safe_dump(data, file)
-    click.echo("超級使用者建立完成")
+        with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'w') as file:
+            yaml.safe_dump(data, file)
 
     if not os.path.exists(BASE_DIR / 'volumes' / 'files'):
         os.mkdir(BASE_DIR / 'volumes' / 'files')
