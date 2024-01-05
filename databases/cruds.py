@@ -2,7 +2,9 @@ import os
 from env_settings import BASE_DIR
 from sqlalchemy.orm import Session
 from databases.schemas import File, Tag
+from datetime import timedelta
 from typing import List
+from sqlalchemy import desc
 
 
 def create_tags(session: Session, tags: List[str]) -> List[Tag]:
@@ -33,12 +35,13 @@ def create_file(session: Session, name: str, description: str, hashcode: str, si
 
 
 def get_files(session: Session):
-    return [parse_file_to_dict(file) for file in session.query(File).all()]
+    return [parse_file_to_dict(file) for file in session.query(File).order_by(desc(File.created_at)).all()]
 
 
 def get_files_by_tag(session: Session, tag: str):
     if tag := session.query(Tag).filter(Tag.name == tag).first():
-        return [parse_file_to_dict(file) for file in tag.files]
+        return [parse_file_to_dict(file) for file in File.query.filter(
+            File.tags.contains(tag)).order_by(desc(File.created_at)).all()]
     else:
         return []
 
@@ -56,7 +59,7 @@ def parse_file_to_dict(file: File):
         'description': file.description,
         'hashcode': file.hashcode,
         'tags': [tag.name for tag in file.tags],
-        'created_at': file.created_at
+        'created_at': file.created_at + timedelta(hours=8)
     }
 
 

@@ -48,14 +48,14 @@ def init_system():
         with open(BASE_DIR / 'volumes' / 'credentials.yaml', 'w') as file:
             yaml.safe_dump(data, file)
 
-    if not os.path.exists(BASE_DIR / 'volumes' / 'files'):
-        os.mkdir(BASE_DIR / 'volumes' / 'files')
-    else:
-        for root, dirs, files in os.walk(BASE_DIR / 'volumes' / 'files'):
-            for file in files:
-                os.remove(os.path.join(root, file))
-        os.rmdir(BASE_DIR / 'volumes' / 'files')
-        os.mkdir(BASE_DIR / 'volumes' / 'files')
+        if not os.path.exists(BASE_DIR / 'volumes' / 'files'):
+            os.mkdir(BASE_DIR / 'volumes' / 'files')
+        else:
+            for root, dirs, files in os.walk(BASE_DIR / 'volumes' / 'files'):
+                for file in files:
+                    os.remove(os.path.join(root, file))
+            os.rmdir(BASE_DIR / 'volumes' / 'files')
+            os.mkdir(BASE_DIR / 'volumes' / 'files')
 
 
 cli.add_command(init_system)
